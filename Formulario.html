@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html><head>
+<title> Practica 2.4 CORE </title>
+<meta charset="UTF-8">
+   <title>Validación de Formularios</title> 
+   <body background="http://www.wallsave.com/wallpapers/1600x1200/azul/61718/azul-roxo-x-papel-de-parede-61718.jpg">
+
+<style type="text/css">
+h1 { color:mediumvioletred;  }
+h2 { color:navy; }
+p { color:black; font-family: Helvetica; font-size: 1.0em; background-color: #4682B4; }
+
+</style>
+
+
+<script type="text/javascript">
+
+var contador = 0;
+var contador2 = 0;
+var espacio = (" ");
+
+
+function comprobar() { 
+
+   //EXTRA: comprobamos que todos los campos estén rellenos y que no se hayan rellenado con espacios en blanco.
+
+         var nombre = document.formulario.nombre;
+         var DNI = document.formulario.DNI;
+         var Correo = document.formulario.Correo;
+         var Estado = document.formulario.Estado;
+         var aviso = document.getElementById("aviso");
+         aviso.innerHTML = ""
+         var enviar = "si"
+
+         if (nombre.value == "" || nombre.value.indexOf(" ") == 0) {
+            var texto = "Es obligatorio introducir el nombre.<br/>"  
+            aviso.innerHTML += texto
+            enviar = "no"
+      
+            }
+         if (DNI.value == "" || DNI.value.indexOf(" ") == 0 ) {
+            var texto = "Es obligatorio introducir el DNI.<br/>"  
+            aviso.innerHTML += texto
+            enviar = "no"
+            }
+         if (Correo.value == "" || Correo.value.indexOf(" ") == 0) {
+            var texto = "Es obligatorio introducir el correo.<br/>"  
+            aviso.innerHTML += texto
+            enviar = "no"
+            }
+         if (Estado.value == "" || Estado.value.indexOf(" ") == 0) {
+            var texto = "Es obligatorio introducir el estado.<br/>"  
+            aviso.innerHTML += texto
+            enviar = "no"
+            }
+         if (enviar == "no") {return false}
+         }
+
+
+function restaurar() {
+   //borra el aviso característico de cada campo en cuanto el usuario vuelve a seleccionar otro campo de texto obligatorio
+         var aviso = document.getElementById("aviso");
+         aviso.innerHTML = "";
+         }
+
+//Primera forma que hemos elegido para validar. llamamos al método de forma autómatia cada vez que actualicemos la casilla a rellenar.
+
+function limitar1(texto) {
+   //Vemos la longitud del texto y actualizamos el contador
+
+	    nombre = texto.value.length;
+	    contador = contador +1;
+
+   //Cuando llegamos a 12 caracteres no nos permite rellenar mas
+   //EXTRA: nos sale los caracteres que llevamos.
+
+         if ( nombre > 11) {
+         	var texto = "El nomre solo puede tener hasta 12 caracteres.<br/>"  ;
+            aviso.innerHTML += texto ;
+            return false ;
+            }else{	
+            var texto = "Lleva " + contador+ " caracteres<br/>";
+            aviso.innerHTML += texto ;
+            return true ;
+         }}
+
+//Segunda forma de validar; vamso actualizando cada vez que se escribe algo en la casilla a tiempo real contando el númer de espacios que hay y por consiguiente nombrando el número de palabras que le quedan.
+
+function limitar2(texto) {
+      estado = texto.value.length;
+      caracter = texto.value;
+      veces=25;
+
+      posicion = caracter.indexOf(espacio); 
+      posfinal = caracter.lastIndexOf(espacio);
+
+      posfinal = estado-posfinal; // la longitud del texto que vamos a analizar, es decir la total menos en la que aparece el último espacio
+
+         while (estado>=posfinal) {
+            posicion = caracter.indexOf(espacio); //nos indica la posición de un espacio
+            posicion++; //pasamos a la posicion siguiente donde no hay espacio ya
+            caracter = caracter.substring(posicion); //quitamos la parte de cadena ya revisada
+            estado -= posicion; // nueva longitud del texto
+            veces--; // contador de veces.
+            }
+
+         if (veces == 0)  {
+            var texto = "Ha llegado al límite de 25 palabras.<br/>"  ;
+            aviso.innerHTML += texto ;
+            return false ;
+            }else{   
+            var texto = "le quedan " + veces+ " palabras<br/>";
+            aviso.innerHTML += texto ;
+            return true ; 
+         }
+	 
+         }
+
+//Tercera forma de validar(Como nos lo piden en el enunciado), justo al cambiar de caracter rellenable a otro salta la función ; tambien vale onbulr=();
+
+function dniValido() {
+
+        var tuDni = document.getElementById('DNI').value;
+         
+         
+         if (tuDni.length == 9){
+            var cadena= "TRWAGMYFPDXBNJZSQVHLCKET";
+            var n= tuDni.substr(0, tuDni.length-1); //mete los número de tu dni menos la letra en la variable n
+            var numero= n % 23; //lo divide entre 23 para ver que posición de la cadena le corresponde
+            var letra= cadena.charAt(numero) ; // ;
+            
+            //mete en letra la letra que te corresponteria con esos números
+            var letr = tuDni.charAt(tuDni.length-1).toUpperCase(); // 
+           
+            //metes la letra que tienes puesta
+            //alert("caca");
+            if (letra == letr){ //si son distintas esta mal puesto
+               //resultado = true;
+               document.getElementById("dni").innerText = "El DNI introducido es correcto.";
+                //alert( "La letra introducida" +letr+ " es correcta, se corresponde con su numero del dni<br/>");
+            //aviso.innerHTML += texto ;
+            }else{ 
+               document.getElementById("dni").innerText = "El DNI introducido es incorrecto, la letra " +letr+ " no es la correspondiente a esos números.";
+
+               //resultado = false;
+               //alert( "La letra introducida" +letr+ " es incorrecta, no se corresponde con su numero del dni<br/>");
+                //var texto = "La letra introducida es incorrecta, por favor, inténtelo de nuevo<br/>";
+            //aviso.innerHTML += texto ;
+            }
+
+
+         } else {
+            document.getElementById("dni").innerText = "El DNI introducido es incorrecto; la cantidad de dígitos es insuficiente.";
+         }
+         //var texto = "La cantidad de dígitos introducidos es insuficiente, son necesarios 8 números y una letra.<br/>";
+            //aviso.innerHTML += texto ;
+         
+}
+
+//Cuarta forma encontrada que sirve para validar un campo, poniendo un botón el cual, cuando es pulsado ,,se ejecuta dicha función a la que hace referencia, aplicandole como valor lo introducido en el cuadrante de texto.
+
+function emailValido(){
+         tuEmail = document.formulario.Correo.value;
+         tuEmail = tuEmail.toString();
+         //En primer lugar comprobamos que hay una cadena de texto; [\w]+ detrás de ella debe estar el signo arroba una vez @{1}, después se escribe otra cadena de texto; [\w]+, despues tiene que haber escrito un punto \. y por último el país u organización, el cual está siempre escrito en letras minúsculas y con dos o tres letras: [a-z]{2,3}.
+         patron = /^[\w]+@{1}[\w]+\.+[a-z]{2,3}$/ ;
+         respuesta = patron.test(tuEmail);
+        alert("La dirección de correo introducida es: "+respuesta+ " Los formatos compatibles son : usuario@dominio.es, usuario.apellido@dominio.es");
+         }
+
+</script>
+
+<body>
+<h1 align="center"><big> Validación de Formularios </big></h1>
+<h2 align="center"> <blink><b> core2.4: Lourdes Luque Cantó y Celia Saras González </b></blink></h2>
+   <p align="center"><i>Estos campos son obligatorios, y no pueden empezar 
+	    por un espacio en blanco.</i></p>
+
+<form name="formulario" align="center" onsubmit="return comprobar()">
+
+   <input type="text" name="nombre" onfocus="restaurar()" onkeypress="return limitar1(this)"/>
+       Nombre<br/><br/>
+
+   <input type="text" id="DNI" name="DNI" onfocus="restaurar()" onchange="dniValido()" />
+   Dni|Nie<br/><br/><span id="dni"></span><br>
+       
+   <input type="text" name="Correo" onfocus="restaurar()" />
+       Correo<br/><br/>
+   
+
+   <input type="text" name="Estado" onfocus="restaurar()" onkeypress="return limitar2(this)" />
+       Estado<br/><br/>
+
+   <input type="submit" />
+
+   <input type="button" onclick="emailValido()" value="Comprobar email valido" />
+
+   
+
+   <input TYPE="RESET" value="Borrar"> 
+</form>
+   <p id="aviso"></p>
+  
+   
+
+
+</body>
+
+</head>
+</html>
